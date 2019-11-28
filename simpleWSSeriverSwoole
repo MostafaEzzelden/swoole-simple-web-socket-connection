@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+$port = 9503;
+
+$server = new swoole_server("0.0.0.0", 9503);
+
+echo "Server Socket start on port $port \r\n";
+
+$server->on('connect', function ($server, $fd){
+    echo "Connection open: {$fd}\n";
+});
+
+$server->on('receive', function ($server, $fd, $from_id, $data) {
+    sleep(1);
+    echo "Receive data: $data\n";
+    $server->send($fd, "Hello world from server");
+    $server->close($fd);
+});
+
+$server->on('close', function ($server, $fd) {
+    echo "Client Connection Closed: {$fd}\n";
+});
+
+
+
+$server->start();
